@@ -1,10 +1,16 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Navbar from './component/Navbar';
-import Blog from './component/Blog';
+import Blog from './pages/Blog';
 import BlogDetails from './component/BlogDetails';
 import Auth from './pages/Auth';
 import CreateBlog from './component/BlogEditor';
+
+const PrivateRoute = ({ element, ...rest }) => {
+  const isAuthenticated = localStorage.getItem('authToken'); // Check if the token is stored
+  return isAuthenticated ? element : <Navigate to="/auth" />;
+};
+
 function App() {
   return (
     <Router>
@@ -15,10 +21,10 @@ function App() {
         <div className="container mx-auto px-8">
           <Navbar />
           <Routes>
-            <Route path="/" element={<Blog />} />
+            <Route path="/" element={<PrivateRoute element={<Blog />} />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/blog/:id" element={<BlogDetails />} />
-            <Route path="/create" element={<CreateBlog />} />
+            <Route path="/blog/:id" element={<PrivateRoute element={<BlogDetails />} />} />
+            <Route path="/create" element={<PrivateRoute element={<CreateBlog />} />} />
           </Routes>
         </div>
       </div>

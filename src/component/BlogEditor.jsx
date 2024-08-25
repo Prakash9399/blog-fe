@@ -1,17 +1,39 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import axios from 'axios';
 
 const BlogEditor = () => {
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleContentChange = (value) => {
-    setContent(value);
+    setDescription(value);
   };
 
-  const handleSubmit = () => {
-    // Handle blog submission logic here
-    console.log('Blog content:', content);
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // Assuming you have the auth token stored in localStorage
+      const authToken = localStorage.getItem('authToken');
+
+      const response = await axios.post(
+        'https://blog-inky-one-94.vercel.app/api/v1/posts', // Replace with your actual backend API URL
+        { title, description },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // Include the auth token in the headers
+          },
+        }
+      );
+
+      console.log('Blog posted successfully:', response.data);
+    } catch (error) {
+      console.error('Error posting blog:', error);
+    }
   };
 
   return (
@@ -24,13 +46,15 @@ const BlogEditor = () => {
             id="title"
             className="w-full p-2 border border-neutral-500 rounded-md bg-neutral-700 text-white"
             placeholder="Enter blog title"
+            value={title}
+            onChange={handleTitleChange}
           />
         </div>
         <div className="mb-4">
           <label htmlFor="content" className="block text-white">Content</label>
           <ReactQuill
             theme="snow"
-            value={content}
+            value={description}
             onChange={handleContentChange}
             className="h-72 bg-white text-black rounded-md overflow-hidden"
           />
