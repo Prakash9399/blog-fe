@@ -21,9 +21,7 @@ const Navbar = () => {
         <h2 className="mr-2 cursor-pointer" onClick={() => navigate('/')}>
           Blogs
         </h2>
-        <h2 className="mr-2 cursor-pointer" onClick={() => navigate('/')}>
-         My Blogs
-        </h2>
+        
         <h2 className="mr-2 cursor-pointer" onClick={() => navigate('/create')}>
          Create Blog
         </h2>

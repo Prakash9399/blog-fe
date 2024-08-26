@@ -26,7 +26,7 @@ const Blog = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {blogs.map((blog) => (
           <div
             key={blog._id}
@@ -34,7 +34,7 @@ const Blog = () => {
           >
             <div className="p-4">
               <h2 className="text-xl font-semibold">{blog.title}</h2>
-              <p className="mt-2">by {blog.name}</p>
+              <p className="mt-2">by {blog.user}</p>
               <p className="mt-3 text-sm">
                 {blog.description.substring(0, 100)}...
               </p>

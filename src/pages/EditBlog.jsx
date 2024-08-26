@@ -1,11 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
 
-const BlogEditor = () => {
+const EditBlog = () => {
+  const { id } = useParams(); // Get the blog ID from the route parameters
+  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch the existing blog post data
+    const fetchBlogDetails = async () => {
+      try {
+        const response = await axios.get(`https://blog-inky-one-94.vercel.app/api/v1/posts/${id}`);
+        setTitle(response.data.title);
+        setDescription(response.data.description);
+        setLoading(false);
+      } catch (error) {
+        setError('Error fetching blog details');
+        setLoading(false);
+      }
+    };
+
+    fetchBlogDetails();
+  }, [id]);
 
   const handleContentChange = (value) => {
     setDescription(value);
@@ -17,11 +39,10 @@ const BlogEditor = () => {
 
   const handleSubmit = async () => {
     try {
-      // Assuming you have the auth token stored in localStorage
-      const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem('authToken'); // Fetch auth token from localStorage
 
-      const response = await axios.post(
-        'https://blog-inky-one-94.vercel.app/api/v1/posts', // Replace with your actual backend API URL
+      const response = await axios.put(
+        `https://blog-inky-one-94.vercel.app/api/v1/posts/${id}`, // Update request to specific blog post
         { title, description },
         {
           headers: {
@@ -30,13 +51,20 @@ const BlogEditor = () => {
         }
       );
 
-      console.log('Blog posted successfully:', response.data);
-      setTitle('')
-      setDescription('')
+      console.log('Blog updated successfully:', response.data);
+      navigate(`/blogs/${id}`); // Redirect back to the blog details page
     } catch (error) {
-      console.error('Error posting blog:', error);
+      console.error('Error updating blog:', error);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="container mx-auto">
@@ -65,11 +93,11 @@ const BlogEditor = () => {
           onClick={handleSubmit}
           className="bg-neutral-600 text-white py-2 px-4 rounded-md transition duration-200"
         >
-          Submit
+          Update Blog
         </button>
       </div>
     </div>
   );
 };
 
-export default BlogEditor;
+export default EditBlog;

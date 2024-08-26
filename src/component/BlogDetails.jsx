@@ -27,7 +27,12 @@ const BlogDetails = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://blog-inky-one-94.vercel.app/api/v1/posts/${id}`);
+      const authToken = localStorage.getItem('authToken'); // Fetch auth token from localStorage
+      await axios.delete(`https://blog-inky-one-94.vercel.app/api/v1/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include the auth token in the headers
+        },
+      });
       navigate('/'); // Redirect to home page after deletion
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -53,18 +58,18 @@ const BlogDetails = () => {
   return (
     <div className="container mx-auto p-4 text-white">
       <h1 className="text-3xl font-semibold mb-4">{blog.title}</h1>
-      <p className="mb-4">by {blog.writer}</p>
+      <p className="mb-4">by {blog.user}</p>
       <p>{blog.description}</p>
       <div className="flex space-x-4 mt-6">
-        <button 
-          onClick={handleEdit} 
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+        <button
+          onClick={handleEdit}
+          className="px-4 py-2 bg-neutral-500 text-white rounded hover:bg-neutral-700"
         >
           Edit
         </button>
-        <button 
-          onClick={handleDelete} 
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+        <button
+          onClick={handleDelete}
+          className="px-4 py-2 bg-neutral-500 text-white rounded hover:bg-neutral-700"
         >
           Delete
         </button>
